@@ -1,0 +1,219 @@
+[
+  {
+    "name": "Rice",
+    "quantity": 2.0,
+    "unit": "kg",
+    "expiryDate": "2024-12-31",
+    "category": "Grains"
+  },
+  {
+    "name": "Onions",
+    "quantity": 1.0,
+    "unit": "kg",
+    "expiryDate": "2024-11-15",
+    "category": "Vegetables"
+  },
+  {
+    "name": "Tomatoes",
+    "quantity": 0.5,
+    "unit": "kg",
+    "expiryDate": "2024-11-10",
+    "category": "Vegetables"
+  },
+  {
+    "name": "Paneer",
+    "quantity": 200.0,
+    "unit": "g",
+    "expiryDate": "2024-11-05",
+    "category": "Dairy"
+  },
+  {
+    "name": "Chicken",
+    "quantity": 500.0,
+    "unit": "g",
+    "expiryDate": "2024-11-03",
+    "category": "Meat"
+  },
+  {
+    "name": "Garlic",
+    "quantity": 100.0,
+    "unit": "g",
+    "expiryDate": "2024-11-20",
+    "category": "Vegetables"
+  },
+  {
+    "name": "Ginger",
+    "quantity": 50.0,
+    "unit": "g",
+    "expiryDate": "2024-11-18",
+    "category": "Vegetables"
+  },
+  {
+    "name": "Potatoes",
+    "quantity": 1.0,
+    "unit": "kg",
+    "expiryDate": "2024-11-25",
+    "category": "Vegetables"
+  },
+  {
+    "name": "Milk",
+    "quantity": 1.0,
+    "unit": "liter",
+    "expiryDate": "2024-11-02",
+    "category": "Dairy"
+  },
+  {
+    "name": "Eggs",
+    "quantity": 12.0,
+    "unit": "pieces",
+    "expiryDate": "2024-11-08",
+    "category": "Dairy"
+  },
+  {
+    "name": "Butter",
+    "quantity": 200.0,
+    "unit": "g",
+    "expiryDate": "2024-12-15",
+    "category": "Dairy"
+  },
+  {
+    "name": "Oil",
+    "quantity": 1.0,
+    "unit": "liter",
+    "expiryDate": "2025-06-30",
+    "category": "Cooking Oil"
+  },
+  {
+    "name": "Salt",
+    "quantity": 500.0,
+    "unit": "g",
+    "expiryDate": "2025-12-31",
+    "category": "Spices"
+  },
+  {
+    "name": "Turmeric Powder",
+    "quantity": 100.0,
+    "unit": "g",
+    "expiryDate": "2025-03-15",
+    "category": "Spices"
+  },
+  {
+    "name": "Red Chili Powder",
+    "quantity": 100.0,
+    "unit": "g",
+    "expiryDate": "2025-02-28",
+    "category": "Spices"
+  },
+  {
+    "name": "Cumin Seeds",
+    "quantity": 50.0,
+    "unit": "g",
+    "expiryDate": "2025-04-10",
+    "category": "Spices"
+  },
+  {
+    "name": "Coriander Powder",
+    "quantity": 100.0,
+    "unit": "g",
+    "expiryDate": "2025-01-20",
+    "category": "Spices"
+  },
+  {
+    "name": "Garam Masala",
+    "quantity": 50.0,
+    "unit": "g",
+    "expiryDate": "2025-05-15",
+    "category": "Spices"
+  },
+  {
+    "name": "Kidney Beans",
+    "quantity": 500.0,
+    "unit": "g",
+    "expiryDate": "2025-08-30",
+    "category": "Legumes"
+  },
+  {
+    "name": "Chickpeas",
+    "quantity": 500.0,
+    "unit": "g",
+    "expiryDate": "2025-09-15",
+    "category": "Legumes"
+  },
+  {
+    "name": "Basmati Rice",
+    "quantity": 1.0,
+    "unit": "kg",
+    "expiryDate": "2025-01-31",
+    "category": "Grains"
+  },
+  {
+    "name": "Wheat Flour",
+    "quantity": 2.0,
+    "unit": "kg",
+    "expiryDate": "2024-12-20",
+    "category": "Grains"
+  },
+  {
+    "name": "Sugar",
+    "quantity": 1.0,
+    "unit": "kg",
+    "expiryDate": "2025-10-31",
+    "category": "Sweeteners"
+  },
+  {
+    "name": "Lemon",
+    "quantity": 6.0,
+    "unit": "pieces",
+    "expiryDate": "2024-11-12",
+    "category": "Fruits"
+  },
+  {
+    "name": "Green Chilies",
+    "quantity": 100.0,
+    "unit": "g",
+    "expiryDate": "2024-11-08",
+    "category": "Vegetables"
+  },
+  {
+    "name": "Curry Leaves",
+    "quantity": 50.0,
+    "unit": "g",
+    "expiryDate": "2024-11-06",
+    "category": "Herbs"
+  },
+  {
+    "name": "Coriander Leaves",
+    "quantity": 100.0,
+    "unit": "g",
+    "expiryDate": "2024-11-04",
+    "category": "Herbs"
+  },
+  {
+    "name": "Mint Leaves",
+    "quantity": 50.0,
+    "unit": "g",
+    "expiryDate": "2024-11-05",
+    "category": "Herbs"
+  },
+  {
+    "name": "Yogurt",
+    "quantity": 500.0,
+    "unit": "g",
+    "expiryDate": "2024-11-07",
+    "category": "Dairy"
+  },
+  {
+    "name": "Cream",
+    "quantity": 200.0,
+    "unit": "ml",
+    "expiryDate": "2024-11-06",
+    "category": "Dairy"
+  },
+  {
+    "name": "Cheese",
+    "quantity": 250.0,
+    "unit": "g",
+    "expiryDate": "2024-11-20",
+    "category": "Dairy"
+  }
+]

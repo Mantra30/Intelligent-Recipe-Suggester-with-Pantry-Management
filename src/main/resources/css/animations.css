@@ -1,0 +1,300 @@
+/* Smart Recipe Suggester - Animations CSS */
+
+/* Fade animations */
+.fade-in {
+    -fx-opacity: 0;
+}
+
+.fade-in.animate {
+    -fx-opacity: 1;
+    -fx-transition: opacity 0.5s ease-in-out;
+}
+
+.fade-out {
+    -fx-opacity: 1;
+}
+
+.fade-out.animate {
+    -fx-opacity: 0;
+    -fx-transition: opacity 0.3s ease-in-out;
+}
+
+/* Scale animations */
+.scale-in {
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+.scale-in.animate {
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+    -fx-transition: scale 0.3s ease-out;
+}
+
+.scale-out {
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}
+
+.scale-out.animate {
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+    -fx-transition: scale 0.3s ease-in;
+}
+
+/* Slide animations */
+.slide-in-left {
+    -fx-translate-x: -200;
+}
+
+.slide-in-left.animate {
+    -fx-translate-x: 0;
+    -fx-transition: translate-x 0.4s ease-out;
+}
+
+.slide-in-right {
+    -fx-translate-x: 200;
+}
+
+.slide-in-right.animate {
+    -fx-translate-x: 0;
+    -fx-transition: translate-x 0.4s ease-out;
+}
+
+.slide-in-up {
+    -fx-translate-y: 200;
+}
+
+.slide-in-up.animate {
+    -fx-translate-y: 0;
+    -fx-transition: translate-y 0.4s ease-out;
+}
+
+.slide-in-down {
+    -fx-translate-y: -200;
+}
+
+.slide-in-down.animate {
+    -fx-translate-y: 0;
+    -fx-transition: translate-y 0.4s ease-out;
+}
+
+/* Bounce animation */
+.bounce {
+    -fx-transition: translate-y 0.6s ease-in-out;
+}
+
+.bounce.animate {
+    -fx-translate-y: -10;
+    -fx-transition: translate-y 0.3s ease-out;
+}
+
+/* Pulse animation */
+.pulse {
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}
+
+.pulse.animate {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-transition: scale 0.2s ease-in-out;
+}
+
+/* Shake animation */
+.shake {
+    -fx-translate-x: 0;
+}
+
+.shake.animate {
+    -fx-translate-x: -5;
+    -fx-transition: translate-x 0.1s ease-in-out;
+}
+
+/* Rotate animation */
+.rotate {
+    -fx-rotate: 0;
+}
+
+.rotate.animate {
+    -fx-rotate: 360;
+    -fx-transition: rotate 0.5s ease-in-out;
+}
+
+/* Glow effect */
+.glow {
+    -fx-effect: dropshadow(gaussian, rgba(230,126,34,0.5), 10, 0, 0, 0);
+}
+
+.glow.animate {
+    -fx-effect: dropshadow(gaussian, rgba(230,126,34,0.8), 15, 0, 0, 0);
+    -fx-transition: effect 0.3s ease-in-out;
+}
+
+/* Button hover animations */
+.button-hover {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.button-hover:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 3);
+}
+
+/* Card hover animations */
+.card-hover {
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.card-hover:hover {
+    -fx-translate-y: -5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 5);
+}
+
+/* Loading animation */
+.loading {
+    -fx-opacity: 0.7;
+    -fx-transition: opacity 0.5s ease-in-out;
+}
+
+.loading.animate {
+    -fx-opacity: 1;
+    -fx-transition: opacity 0.5s ease-in-out;
+}
+
+/* Success animation */
+.success {
+    -fx-background-color: #27ae60;
+    -fx-transition: background-color 0.3s ease-in-out;
+}
+
+.success.animate {
+    -fx-background-color: #2ecc71;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+/* Error animation */
+.error {
+    -fx-background-color: #e74c3c;
+    -fx-transition: background-color 0.3s ease-in-out;
+}
+
+.error.animate {
+    -fx-background-color: #c0392b;
+    -fx-effect: dropshadow(gaussian, rgba(231,76,60,0.5), 10, 0, 0, 0);
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+/* Warning animation */
+.warning {
+    -fx-background-color: #f39c12;
+    -fx-transition: background-color 0.3s ease-in-out;
+}
+
+.warning.animate {
+    -fx-background-color: #e67e22;
+    -fx-effect: dropshadow(gaussian, rgba(243,156,18,0.5), 10, 0, 0, 0);
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+/* Progress bar animation */
+.progress-bar-animated .bar {
+    -fx-background-color: linear-gradient(to right, #e67e22, #f39c12);
+    -fx-transition: background-color 0.5s ease-in-out;
+}
+
+/* List item animations */
+.list-item-enter {
+    -fx-opacity: 0;
+    -fx-translate-x: -50;
+}
+
+.list-item-enter.animate {
+    -fx-opacity: 1;
+    -fx-translate-x: 0;
+    -fx-transition: all 0.3s ease-out;
+}
+
+/* Table row animations */
+.table-row-enter {
+    -fx-opacity: 0;
+    -fx-translate-y: 20;
+}
+
+.table-row-enter.animate {
+    -fx-opacity: 1;
+    -fx-translate-y: 0;
+    -fx-transition: all 0.3s ease-out;
+}
+
+/* Text animations */
+.text-fade-in {
+    -fx-opacity: 0;
+}
+
+.text-fade-in.animate {
+    -fx-opacity: 1;
+    -fx-transition: opacity 0.8s ease-in-out;
+}
+
+.text-slide-up {
+    -fx-translate-y: 30;
+    -fx-opacity: 0;
+}
+
+.text-slide-up.animate {
+    -fx-translate-y: 0;
+    -fx-opacity: 1;
+    -fx-transition: all 0.6s ease-out;
+}
+
+/* Icon animations */
+.icon-spin {
+    -fx-rotate: 0;
+}
+
+.icon-spin.animate {
+    -fx-rotate: 360;
+    -fx-transition: rotate 1s linear infinite;
+}
+
+.icon-bounce {
+    -fx-translate-y: 0;
+}
+
+.icon-bounce.animate {
+    -fx-translate-y: -5;
+    -fx-transition: translate-y 0.3s ease-in-out infinite alternate;
+}
+
+/* Responsive animations */
+@media (max-width: 800px) {
+    .slide-in-left, .slide-in-right {
+        -fx-translate-x: -100;
+    }
+    
+    .slide-in-up, .slide-in-down {
+        -fx-translate-y: 100;
+    }
+    
+    .button-hover:hover {
+        -fx-scale-x: 1.02;
+        -fx-scale-y: 1.02;
+    }
+}
+
+/* Animation delays for staggered effects */
+.delay-1 { -fx-transition-delay: 0.1s; }
+.delay-2 { -fx-transition-delay: 0.2s; }
+.delay-3 { -fx-transition-delay: 0.3s; }
+.delay-4 { -fx-transition-delay: 0.4s; }
+.delay-5 { -fx-transition-delay: 0.5s; }
+
+/* Animation duration variations */
+.fast { -fx-transition-duration: 0.2s; }
+.normal { -fx-transition-duration: 0.3s; }
+.slow { -fx-transition-duration: 0.5s; }
+.slower { -fx-transition-duration: 0.8s; }

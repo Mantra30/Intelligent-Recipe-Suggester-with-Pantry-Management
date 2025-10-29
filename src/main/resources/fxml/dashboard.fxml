@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smartrecipes.controllers.DashboardController">
+   <top>
+      <VBox spacing="10.0">
+         <children>
+            <Text fx:id="welcomeText" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Smart Recipe Suggester! 🍲" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Text>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Button fx:id="pantryButton" mnemonicParsing="false" onAction="#handlePantryButton" text="📦 Pantry" />
+                  <Button fx:id="recipesButton" mnemonicParsing="false" onAction="#handleRecipesButton" text="📖 Recipes" />
+                  <Button fx:id="suggestionsButton" mnemonicParsing="false" onAction="#handleSuggestionsButton" text="💡 Suggestions" />
+                  <Button fx:id="historyButton" mnemonicParsing="false" onAction="#handleHistoryButton" text="📊 History" />
+                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#handleRefreshButton" text="🔄 Refresh" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </top>
+   <center>
+      <VBox fx:id="dashboardContainer" spacing="20.0">
+         <children>
+            <HBox spacing="20.0">
+               <children>
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Text text="📊 Pantry Statistics" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="pantryStatsText" text="Loading..." textAlignment="CENTER" />
+                        <ProgressBar fx:id="pantryHealthBar" prefWidth="200.0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Text text="📖 Recipe Statistics" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="recipeStatsText" text="Loading..." textAlignment="CENTER" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Text text="📊 History Statistics" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="historyStatsText" text="Loading..." textAlignment="CENTER" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="20.0">
+               <children>
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Text text="🍽️ Recent Recipes" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Text>
+                        <ListView fx:id="recentRecipesList" prefHeight="150.0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Text text="⚠️ Expiring Ingredients" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Text>
+                        <ListView fx:id="expiringIngredientsList" prefHeight="150.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane>

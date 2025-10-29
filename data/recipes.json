@@ -1,0 +1,292 @@
+[
+  {
+    "id": "recipe_0",
+    "title": "title": "title": "title": "title": "title": "Paneer Butter Masala",
+    "description": "description": "description": "description": "description": "description": "A rich and creamy North Indian curry",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_1",
+    "title": "title": "title": "title": "title": "title": "Chicken Fried Rice",
+    "description": "description": "description": "description": "description": "description": "Chinese-style fried rice with chicken",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_2",
+    "title": "title": "title": "title": "title": "Vegetable Fried Rice",
+    "description": "description": "description": "description": "description": "Colorful fried rice with mixed vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_3",
+    "title": "title": "title": "title": "title": "Mushroom Risotto",
+    "description": "description": "description": "description": "description": "Creamy Italian rice dish with mushrooms",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_4",
+    "title": "title": "title": "title": "title": "Chicken Tikka Masala",
+    "description": "description": "description": "description": "description": "Creamy Indian curry with tender chicken pieces",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_5",
+    "title": "title": "title": "title": "title": "Chicken Stir Fry",
+    "description": "description": "description": "description": "description": "Quick and healthy Asian-style chicken with vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_6",
+    "title": "title": "title": "title": "Quick Vegetable Soup",
+    "description": "description": "description": "description": "Healthy and comforting vegetable soup",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_7",
+    "title": "title": "title": "title": "Chicken Tikka Masala",
+    "description": "description": "description": "description": "Creamy Indian curry with tender chicken pieces",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_8",
+    "title": "title": "title": "title": "Chicken Stir Fry",
+    "description": "description": "description": "description": "Quick and healthy Asian-style chicken with vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_9",
+    "title": "title": "title": "Margherita Pizza",
+    "description": "description": "description": "Classic Italian pizza with tomato sauce, mozzarella, and fresh basil",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_10",
+    "title": "title": "title": "Pepperoni Pizza",
+    "description": "description": "description": "Classic American pizza with pepperoni and cheese",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_11",
+    "title": "title": "title": "Vegetable Supreme Pizza",
+    "description": "description": "description": "Loaded vegetarian pizza with fresh vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_12",
+    "title": "title": "title": "Chicken Tikka Masala",
+    "description": "description": "description": "Creamy Indian curry with tender chicken pieces",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_13",
+    "title": "title": "title": "Chicken Stir Fry",
+    "description": "description": "description": "Quick and healthy Asian-style chicken with vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_14",
+    "title": "title": "title": "Simple Stir Fry",
+    "description": "description": "description": "Quick and easy stir fry with any vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_15",
+    "title": "title": "title": "Vegetable Soup",
+    "description": "description": "description": "Hearty soup with any available vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_16",
+    "title": "title": "title": "Spaghetti Carbonara",
+    "description": "description": "description": "Classic Italian pasta with eggs, cheese, and pancetta",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_17",
+    "title": "title": "title": "Classic Burger",
+    "description": "description": "description": "Juicy beef burger with lettuce, tomato, and cheese",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_18",
+    "title": "title": "title": "Dal Tadka",
+    "description": "description": "description": "Spiced lentil curry with aromatic tempering",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_19",
+    "title": "title": "Margherita Pizza",
+    "description": "description": "Classic Italian pizza with tomato sauce, mozzarella, and fresh basil",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_20",
+    "title": "title": "Pepperoni Pizza",
+    "description": "description": "Classic American pizza with pepperoni and cheese",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_21",
+    "title": "title": "Vegetable Supreme Pizza",
+    "description": "description": "Loaded vegetarian pizza with fresh vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_22",
+    "title": "title": "Chicken Tikka Masala",
+    "description": "description": "Creamy Indian curry with tender chicken pieces",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_23",
+    "title": "title": "Chicken Stir Fry",
+    "description": "description": "Quick and healthy Asian-style chicken with vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_24",
+    "title": "title": "Simple Stir Fry",
+    "description": "description": "Quick and easy stir fry with any vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_25",
+    "title": "title": "Vegetable Soup",
+    "description": "description": "Hearty soup with any available vegetables",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_26",
+    "title": "title": "Spaghetti Carbonara",
+    "description": "description": "Classic Italian pasta with eggs, cheese, and pancetta",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_27",
+    "title": "title": "Classic Burger",
+    "description": "description": "Juicy beef burger with lettuce, tomato, and cheese",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  },
+  {
+    "id": "recipe_28",
+    "title": "title": "Dal Tadka",
+    "description": "description": "Spiced lentil curry with aromatic tempering",
+    "cuisine": "Indian",
+    "difficulty": "Easy",
+    "prepTime": 15,
+    "cookTime": 30,
+    "servings": 4
+  }
+]

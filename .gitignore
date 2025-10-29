@@ -1,0 +1,46 @@
+# Compiled class files
+*.class
+build/
+target/
+
+# JavaFX SDK (should be downloaded separately)
+javafx-sdk-*/
+javafx-sdk.zip
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.cursor/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Logs
+*.log
+
+# Compiled files
+*.jar
+*.war
+*.ear
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# Package files
+*.zip
+
+# Local data files (optional - uncomment if you want to exclude)
+# data/*.json

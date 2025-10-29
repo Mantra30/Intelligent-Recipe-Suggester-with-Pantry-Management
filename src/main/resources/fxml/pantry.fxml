@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.smartrecipes.controllers.PantryController">
+   <top>
+      <VBox spacing="10.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="📦 Pantry Management" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Text>
+            <HBox spacing="10.0">
+               <children>
+                  <TextField fx:id="searchField" promptText="Search ingredients..." />
+                  <ComboBox fx:id="categoryFilter" promptText="Filter by category" />
+                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddButton" text="➕ Add" />
+                  <Button fx:id="editButton" mnemonicParsing="false" onAction="#handleEditButton" text="✏️ Edit" />
+                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" text="🗑️ Delete" />
+                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#handleRefreshButton" text="🔄 Refresh" />
+               </children>
+            </HBox>
+            <Label fx:id="statsLabel" text="Loading statistics..." textAlignment="CENTER" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </top>
+   <center>
+      <VBox fx:id="pantryContainer" spacing="10.0">
+         <children>
+            <TableView fx:id="ingredientsTable" prefHeight="400.0">
+               <columns>
+                  <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
+                  <TableColumn fx:id="quantityColumn" prefWidth="80.0" text="Quantity" />
+                  <TableColumn fx:id="unitColumn" prefWidth="80.0" text="Unit" />
+                  <TableColumn fx:id="expiryColumn" prefWidth="120.0" text="Expiry Date" />
+                  <TableColumn fx:id="categoryColumn" prefWidth="100.0" text="Category" />
+               </columns>
+            </TableView>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane>
