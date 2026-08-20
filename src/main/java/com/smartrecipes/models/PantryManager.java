@@ -1,7 +1,7 @@
 package com.smartrecipes.models;
 
 import com.smartrecipes.utils.FileHandler;
-import java.time.LocalDate;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,27 +10,132 @@ import java.util.stream.Collectors;
  */
 public class PantryManager {
     private Map<String, Ingredient> ingredients;
-    private static final String PANTRY_FILE = "data/pantry.json";
+    private static final String PANTRY_FILE = resolvePantryPath();
+    private static final String LEGACY_PANTRY_FILE = "data/pantry.json";
     
     public PantryManager() {
         this.ingredients = new HashMap<>();
+        migratePantryIfNeeded();
         loadPantry();
+    }
+
+    private static String resolvePantryPath() {
+        String base = System.getProperty("user.home");
+        String dir = base + File.separator + ".smartrecipes";
+        try {
+            com.smartrecipes.utils.FileHandler.createDirectoryIfNotExists(dir);
+        } catch (Exception ignored) {}
+        return dir + File.separator + "pantry.json";
+    }
+
+    private void migratePantryIfNeeded() {
+        try {
+            boolean newExists = com.smartrecipes.utils.FileHandler.fileExists(PANTRY_FILE);
+            if (newExists) {
+                return; // New file exists, no migration needed
+            }
+            
+            // Try multiple legacy locations
+            String[] legacyPaths = {
+                LEGACY_PANTRY_FILE,
+                "src/main/resources/data/pantry.json",
+                System.getProperty("user.dir") + File.separator + "data" + File.separator + "pantry.json",
+                System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "data" + File.separator + "pantry.json"
+            };
+            
+            for (String legacyPath : legacyPaths) {
+                if (com.smartrecipes.utils.FileHandler.fileExists(legacyPath)) {
+                    try {
+                        List<Ingredient> legacy = com.smartrecipes.utils.FileHandler.loadIngredients(legacyPath);
+                ingredients.clear();
+                for (Ingredient i : legacy) {
+                    ingredients.put(i.getName().toLowerCase(), i);
+                }
+                savePantry();
+                        System.out.println("Migrated pantry from: " + legacyPath);
+                        return;
+                    } catch (Exception e) {
+                        System.err.println("Failed to migrate from " + legacyPath + ": " + e.getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error during pantry migration: " + e.getMessage());
+        }
     }
     
     /**
      * Load pantry data from JSON file
      */
     public void loadPantry() {
+        System.out.println("Attempting to load pantry from: " + PANTRY_FILE);
+        System.out.println("File exists: " + com.smartrecipes.utils.FileHandler.fileExists(PANTRY_FILE));
+        
+        // First try the primary location
+        if (com.smartrecipes.utils.FileHandler.fileExists(PANTRY_FILE)) {
         try {
             List<Ingredient> ingredientList = FileHandler.loadIngredients(PANTRY_FILE);
+                if (ingredientList != null && !ingredientList.isEmpty()) {
             ingredients.clear();
             for (Ingredient ingredient : ingredientList) {
+                        if (ingredient != null && ingredient.getName() != null) {
                 ingredients.put(ingredient.getName().toLowerCase(), ingredient);
+                        }
+                    }
+                    System.out.println("✓ Loaded " + ingredients.size() + " pantry items from " + PANTRY_FILE);
+                    return;
+                } else {
+                    System.out.println("⚠ Pantry file exists but is empty: " + PANTRY_FILE);
+                }
+            } catch (Exception e) {
+                System.err.println("✗ Error loading pantry from " + PANTRY_FILE + ": " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("⚠ Pantry file does not exist: " + PANTRY_FILE);
+        }
+        
+        // Try legacy locations
+        String[] legacyPaths = {
+            "src/main/resources/data/pantry.json",
+            System.getProperty("user.dir") + File.separator + "data" + File.separator + "pantry.json",
+            System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "data" + File.separator + "pantry.json",
+            "data/pantry.json"
+        };
+        
+        for (String legacyPath : legacyPaths) {
+            if (com.smartrecipes.utils.FileHandler.fileExists(legacyPath)) {
+                try {
+                    System.out.println("Trying legacy location: " + legacyPath);
+                    List<Ingredient> legacyList = FileHandler.loadIngredients(legacyPath);
+                    if (legacyList != null && !legacyList.isEmpty()) {
+                        ingredients.clear();
+                        for (Ingredient ingredient : legacyList) {
+                            ingredients.put(ingredient.getName().toLowerCase(), ingredient);
+                        }
+                        System.out.println("✓ Loaded " + ingredients.size() + " pantry items from legacy location: " + legacyPath);
+                        savePantry(); // Save to new location
+                        return;
             }
         } catch (Exception e) {
-            System.err.println("Error loading pantry: " + e.getMessage());
-            ingredients.clear();
+                    System.err.println("✗ Failed to load from " + legacyPath + ": " + e.getMessage());
+                }
+            }
         }
+        
+        // If no file found, check if we have items in memory (from migration)
+        if (ingredients.isEmpty()) {
+            System.out.println("⚠ No pantry file found. Starting with empty pantry.");
+        } else {
+            System.out.println("ℹ Using " + ingredients.size() + " items from in-memory pantry.");
+        }
+    }
+    
+    /**
+     * Reload pantry from file (useful for refresh)
+     */
+    public void reloadPantry() {
+        loadPantry();
     }
     
     /**
@@ -40,16 +145,34 @@ public class PantryManager {
         try {
             List<Ingredient> ingredientList = new ArrayList<>(ingredients.values());
             FileHandler.saveIngredients(PANTRY_FILE, ingredientList);
+            System.out.println("✓ Saved " + ingredientList.size() + " pantry items to " + PANTRY_FILE);
         } catch (Exception e) {
-            System.err.println("Error saving pantry: " + e.getMessage());
+            System.err.println("✗ Error saving pantry to " + PANTRY_FILE + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     /**
-     * Add or update an ingredient in the pantry
+     * Add or update an ingredient in the pantry (with duplicate prevention)
      */
     public void addIngredient(Ingredient ingredient) {
-        String key = ingredient.getName().toLowerCase();
+        String key = ingredient.getName().toLowerCase().trim();
+        
+        // Check for similar ingredients (case-insensitive, normalized)
+        Ingredient existing = ingredients.get(key);
+        if (existing != null) {
+            // Merge quantities if same ingredient
+            double newQuantity = existing.getQuantity() + ingredient.getQuantity();
+            existing.setQuantity(newQuantity);
+            // Update expiry to the later date
+            if (ingredient.getExpiryDate() != null && 
+                (existing.getExpiryDate() == null || ingredient.getExpiryDate().isAfter(existing.getExpiryDate()))) {
+                existing.setExpiryDate(ingredient.getExpiryDate());
+            }
+            savePantry();
+            return;
+        }
+        
         ingredients.put(key, ingredient);
         savePantry();
     }
@@ -145,7 +268,8 @@ public class PantryManager {
                 // Reduce quantity (assuming 1 unit per recipe)
                 double newQuantity = pantryIngredient.getQuantity() - 1.0;
                 if (newQuantity <= 0) {
-                    removeIngredient(pantryIngredient.getName());
+                    // Do not auto-remove; set to zero and keep until manual removal or expiry
+                    pantryIngredient.setQuantity(0);
                 } else {
                     pantryIngredient.setQuantity(newQuantity);
                 }
@@ -154,9 +278,8 @@ public class PantryManager {
             }
         }
         
-        if (allConsumed) {
-            savePantry();
-        }
+        // Always persist changes so state is kept across restarts
+        savePantry();
         return allConsumed;
     }
     

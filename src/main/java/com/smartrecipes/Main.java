@@ -1,8 +1,8 @@
 package com.smartrecipes;
 
 import com.smartrecipes.models.*;
-import com.smartrecipes.utils.UIUtils;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -53,7 +53,22 @@ public class Main extends Application {
         primaryStage.centerOnScreen();
         primaryStage.show();
         
+        // Refresh pantry list and auto-load recipe suggestions after UI is fully rendered
+        Platform.runLater(() -> {
+            if (pantryList != null) {
+                updatePantryList(pantryList);
+            }
+            System.out.println("Pantry list refreshed with " + pantryManager.getAllIngredients().size() + " items");
+            
+            // Automatically load recipe suggestions on app startup (sorted by match percentage)
+            if (!pantryManager.getAllIngredients().isEmpty()) {
+                findRecipes(); // This will automatically sort by match percentage (highest to lowest)
+                System.out.println("Auto-loaded recipe suggestions sorted by match percentage");
+            }
+        });
+        
         System.out.println("Smart Recipe Suggester Advanced Edition started successfully! 🍲");
+        System.out.println("Pantry contains " + pantryManager.getAllIngredients().size() + " items");
     }
     
     private Scene createMainScene() {
@@ -200,7 +215,10 @@ public class Main extends Application {
         
         HBox pantryButtons = new HBox(10);
         Button refreshPantryBtn = createStyledButton("🔄 Refresh", "#3498db");
-        refreshPantryBtn.setOnAction(e -> updatePantryList(pantryList));
+        refreshPantryBtn.setOnAction(e -> {
+            pantryManager.reloadPantry();
+            updatePantryList(pantryList);
+        });
         
         Button removePantryBtn = createStyledButton("🗑️ Remove", "#e74c3c");
         removePantryBtn.setOnAction(e -> removeSelectedPantryItem());
@@ -411,7 +429,8 @@ public class Main extends Application {
         quantityInput.clear();
         statusLabel.setText("Added " + quantity + " " + unit + " of " + ingredientName + " to pantry! ✅");
         
-        // Update pantry display
+        // Reload and update pantry display to ensure visibility
+        pantryManager.reloadPantry();
         updatePantryList(pantryList);
     }
     
@@ -451,11 +470,14 @@ public class Main extends Application {
             return;
         }
         
+        // Get recipes sorted by match percentage (highest to lowest)
+        // Recipes are already sorted by RecipeManager.getSuggestedRecipes()
         List<Recipe> suggestions = recipeManager.getSuggestedRecipes(availableIngredients, pantryManager);
         
-        // Update suggestions list
+        // Update suggestions list - maintain the sorted order (highest match at top, lowest at bottom)
         suggestionsList.getItems().clear();
         for (Recipe recipe : suggestions) {
+            // Calculate match score for display (using same method as sorting for consistency)
             double matchScore = calculateMatchScore(recipe, availableIngredients);
             String dietaryIcon = getDietaryIcon(recipe.getDietaryType());
             String dietaryType = recipe.getDietaryType() != null ? recipe.getDietaryType() : "Unknown";
@@ -464,7 +486,7 @@ public class Main extends Application {
             suggestionsList.getItems().add(displayText);
         }
         
-        statusLabel.setText("Found " + suggestions.size() + " recipe suggestions! 🎯");
+        statusLabel.setText("Found " + suggestions.size() + " recipe suggestions! 🎯 (Sorted by match percentage: highest to lowest)");
     }
     
     private void browseAllRecipes() {

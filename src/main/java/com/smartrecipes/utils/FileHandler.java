@@ -20,37 +20,58 @@ public class FileHandler {
     
     /**
      * Load ingredients from JSON file (simplified)
+     * Returns empty list if file doesn't exist (don't create sample data)
      */
     public static List<Ingredient> loadIngredients(String filePath) throws IOException {
         List<Ingredient> ingredients = new ArrayList<>();
-        
-        // Create sample ingredients if file doesn't exist
+
+        // Return empty list if file doesn't exist (don't create sample data)
         if (!Files.exists(Paths.get(filePath))) {
-            ingredients.add(new Ingredient("Rice", 2.0, "kg", LocalDate.now().plusDays(30), "Grains"));
-            ingredients.add(new Ingredient("Onions", 1.0, "kg", LocalDate.now().plusDays(7), "Vegetables"));
-            ingredients.add(new Ingredient("Tomatoes", 0.5, "kg", LocalDate.now().plusDays(5), "Vegetables"));
-            ingredients.add(new Ingredient("Paneer", 200.0, "g", LocalDate.now().plusDays(3), "Dairy"));
-            ingredients.add(new Ingredient("Chicken", 500.0, "g", LocalDate.now().plusDays(2), "Meat"));
             return ingredients;
         }
-        
+
+        // Tolerant parsing: read objects between { ... } and extract fields in any order
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
+            boolean inObject = false;
+            String name = null;
+            String unit = null;
+            String category = null;
+            Double quantity = null;
+            LocalDate expiry = null;
+
             while ((line = reader.readLine()) != null) {
-                if (line.trim().startsWith("\"name\"")) {
-                    String name = extractValue(line);
-                    String quantityStr = reader.readLine();
-                    double quantity = Double.parseDouble(extractValue(quantityStr));
-                    String unit = extractValue(reader.readLine());
-                    String expiryStr = extractValue(reader.readLine());
-                    LocalDate expiry = LocalDate.parse(expiryStr);
-                    String category = extractValue(reader.readLine());
-                    
-                    ingredients.add(new Ingredient(name, quantity, unit, expiry, category));
+                String trimmed = line.trim();
+                if (trimmed.startsWith("{")) {
+                    inObject = true;
+                    name = null; unit = null; category = null; quantity = null; expiry = null;
+                    continue;
+                }
+                if (trimmed.startsWith("}")) {
+                    if (inObject && name != null && quantity != null && unit != null && expiry != null) {
+                        ingredients.add(new Ingredient(name, quantity, unit, expiry, category));
+                    }
+                    inObject = false;
+                    continue;
+                }
+                if (!inObject) continue;
+
+                if (trimmed.startsWith("\"name\"")) {
+                    name = extractValue(trimmed);
+                } else if (trimmed.startsWith("\"quantity\"")) {
+                    String val = extractValueOrNumber(trimmed);
+                    try { quantity = Double.parseDouble(val); } catch (NumberFormatException ignored) {}
+                } else if (trimmed.startsWith("\"unit\"")) {
+                    unit = extractValue(trimmed);
+                } else if (trimmed.startsWith("\"expiry\"") || trimmed.startsWith("\"expiryDate\"")) {
+                    String v = extractValue(trimmed);
+                    try { expiry = LocalDate.parse(v); } catch (Exception ignored) {}
+                } else if (trimmed.startsWith("\"category\"")) {
+                    category = extractValue(trimmed);
                 }
             }
         }
-        
+
         return ingredients;
     }
     
@@ -202,6 +223,19 @@ public class FileHandler {
         int end = line.lastIndexOf("\"");
         if (end == -1 || end <= start) return "";
         return line.substring(start, end);
+    }
+
+    // Extracts number value as string from a JSON line like: "quantity": 1,
+    private static String extractValueOrNumber(String line) {
+        if (line == null) return "";
+        int colon = line.indexOf(":");
+        if (colon == -1) return "";
+        String after = line.substring(colon + 1).trim();
+        // strip trailing comma
+        if (after.endsWith(",")) after = after.substring(0, after.length() - 1).trim();
+        // if quoted, reuse extractValue
+        if (after.startsWith("\"")) return extractValue(after);
+        return after;
     }
     
     /**

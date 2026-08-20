@@ -44,3 +44,6 @@ mvnw.cmd
 
 # Local data files (optional - uncomment if you want to exclude)
 # data/*.json
+
+# User-specific data (should be in user home directory)
+.smartrecipes/

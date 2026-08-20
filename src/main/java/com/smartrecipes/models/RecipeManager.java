@@ -1,8 +1,9 @@
 package com.smartrecipes.models;
 
 import com.smartrecipes.utils.FileHandler;
-import com.smartrecipes.utils.FuzzyMatcher;
+import com.smartrecipes.utils.IngredientMatcher;
 import com.smartrecipes.utils.RecipeScraper;
+import com.smartrecipes.utils.RecipeSeeder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,12 +13,47 @@ import java.util.stream.Collectors;
 public class RecipeManager {
     private List<Recipe> recipes;
     private Map<String, Recipe> recipeMap;
+    private Map<String, List<Recipe>> searchIndex; // Fast search index
     private static final String RECIPES_FILE = "data/recipes.json";
     
     public RecipeManager() {
         this.recipes = new ArrayList<>();
         this.recipeMap = new HashMap<>();
+        this.searchIndex = new HashMap<>();
         loadRecipes();
+        buildSearchIndex();
+    }
+    
+    /**
+     * Build fast search index for instant recipe lookup
+     */
+    private void buildSearchIndex() {
+        searchIndex.clear();
+        for (Recipe recipe : recipes) {
+            // Index by title words
+            String[] titleWords = recipe.getTitle().toLowerCase().split("\\s+");
+            for (String word : titleWords) {
+                if (word.length() > 2) { // Ignore short words
+                    searchIndex.computeIfAbsent(word, k -> new ArrayList<>()).add(recipe);
+                }
+            }
+            
+            // Index by cuisine
+            if (recipe.getCuisine() != null) {
+                String cuisine = recipe.getCuisine().toLowerCase();
+                searchIndex.computeIfAbsent(cuisine, k -> new ArrayList<>()).add(recipe);
+            }
+            
+            // Index by ingredient words
+            for (String ingredient : recipe.getIngredients()) {
+                String[] words = ingredient.toLowerCase().split("\\s+");
+                for (String word : words) {
+                    if (word.length() > 3) { // Ignore very short words
+                        searchIndex.computeIfAbsent(word, k -> new ArrayList<>()).add(recipe);
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -29,6 +65,19 @@ public class RecipeManager {
             recipeMap.clear();
             for (Recipe recipe : recipes) {
                 recipeMap.put(recipe.getId(), recipe);
+            }
+            // Only seed if we have very few recipes (performance optimization)
+            if (recipes.size() < 50) {
+                int added = RecipeSeeder.ensureMinimumRecipes(this, 50, 50);
+            if (added > 0) {
+                // refresh map
+                recipeMap.clear();
+                for (Recipe recipe : recipes) {
+                    recipeMap.put(recipe.getId(), recipe);
+                }
+                saveRecipes();
+                buildSearchIndex(); // Rebuild index after seeding
+                }
             }
         } catch (Exception e) {
             System.err.println("Error loading recipes: " + e.getMessage());
@@ -62,15 +111,27 @@ public class RecipeManager {
     }
     
     /**
-     * Add a new recipe
+     * Add a new recipe (with duplicate prevention)
      */
     public void addRecipe(Recipe recipe) {
+        // Check for duplicates by title
+        String normalizedTitle = recipe.getTitle().toLowerCase().trim();
+        for (Recipe existing : recipes) {
+            if (existing.getTitle().toLowerCase().trim().equals(normalizedTitle)) {
+                // Update existing recipe instead of adding duplicate
+                recipe.setId(existing.getId());
+                updateRecipe(recipe);
+                return;
+            }
+        }
+        
         if (recipe.getId() == null || recipe.getId().isEmpty()) {
             recipe.setId(generateRecipeId());
         }
         recipes.add(recipe);
         recipeMap.put(recipe.getId(), recipe);
         saveRecipes();
+        buildSearchIndex(); // Rebuild index
     }
     
     /**
@@ -83,6 +144,7 @@ public class RecipeManager {
             recipes.set(index, recipe);
             recipeMap.put(recipe.getId(), recipe);
             saveRecipes();
+            buildSearchIndex(); // Rebuild index
             return true;
         }
         return false;
@@ -96,13 +158,14 @@ public class RecipeManager {
         if (recipe != null) {
             recipes.remove(recipe);
             saveRecipes();
+            buildSearchIndex(); // Rebuild index
             return true;
         }
         return false;
     }
     
     /**
-     * Search recipes by title or description
+     * Fast search recipes using indexed lookup
      */
     public List<Recipe> searchRecipes(String query) {
         if (query == null || query.trim().isEmpty()) {
@@ -110,11 +173,50 @@ public class RecipeManager {
         }
         
         String normalizedQuery = query.toLowerCase().trim();
-        return recipes.stream()
-                .filter(recipe -> recipe.getTitle().toLowerCase().contains(normalizedQuery) ||
-                                (recipe.getDescription() != null && 
-                                 recipe.getDescription().toLowerCase().contains(normalizedQuery)))
-                .collect(Collectors.toList());
+        String[] queryWords = normalizedQuery.split("\\s+");
+        
+        // Use index for fast lookup
+        Map<Recipe, Integer> recipeScores = new HashMap<>();
+        for (String word : queryWords) {
+            if (word.length() > 2) {
+                List<Recipe> matches = searchIndex.getOrDefault(word, new ArrayList<>());
+                for (Recipe recipe : matches) {
+                    recipeScores.put(recipe, recipeScores.getOrDefault(recipe, 0) + 1);
+                }
+            }
+        }
+        
+        // Also do traditional search for partial matches
+        List<Recipe> results = new ArrayList<>();
+        Set<Recipe> seen = new HashSet<>();
+        
+        // Add indexed results
+        for (Map.Entry<Recipe, Integer> entry : recipeScores.entrySet()) {
+            if (entry.getValue() > 0) {
+                results.add(entry.getKey());
+                seen.add(entry.getKey());
+            }
+        }
+        
+        // Add partial matches from traditional search
+        for (Recipe recipe : recipes) {
+            if (!seen.contains(recipe)) {
+                if (recipe.getTitle().toLowerCase().contains(normalizedQuery) ||
+                    (recipe.getDescription() != null && 
+                     recipe.getDescription().toLowerCase().contains(normalizedQuery))) {
+                    results.add(recipe);
+                }
+            }
+        }
+        
+        // Sort by relevance (score from index)
+        results.sort((r1, r2) -> {
+            int score1 = recipeScores.getOrDefault(r1, 0);
+            int score2 = recipeScores.getOrDefault(r2, 0);
+            return Integer.compare(score2, score1);
+        });
+        
+        return results;
     }
     
     /**
@@ -146,69 +248,110 @@ public class RecipeManager {
     
     /**
      * Get recipes that can be made with available ingredients
+     * Returns maximum recipes sorted by match percentage (highest to lowest)
      */
     public List<Recipe> getSuggestedRecipes(List<String> availableIngredients, PantryManager pantryManager) {
-        List<Recipe> suggestions = new ArrayList<>();
+        List<Recipe> suggestions = new ArrayList<>(recipes);
         
-        for (Recipe recipe : recipes) {
-            double matchScore = calculateIngredientMatch(recipe.getIngredients(), availableIngredients);
-            if (matchScore > 0.3) { // At least 30% ingredient match
-                suggestions.add(recipe);
-            }
+        // Cache match scores to avoid recalculating during sort (performance optimization)
+        Map<Recipe, Double> scoreCache = new HashMap<>();
+        for (Recipe recipe : suggestions) {
+            scoreCache.put(recipe, calculateIngredientMatch(recipe.getIngredients(), availableIngredients));
         }
         
-        // Sort by match score (descending)
+        // Sort by match percentage (descending) - highest match percentage at top, lowest at bottom
         suggestions.sort((r1, r2) -> {
-            double score1 = calculateIngredientMatch(r1.getIngredients(), availableIngredients);
-            double score2 = calculateIngredientMatch(r2.getIngredients(), availableIngredients);
-            return Double.compare(score2, score1);
+            double score1 = scoreCache.get(r1);
+            double score2 = scoreCache.get(r2);
+            return Double.compare(score2, score1); // Descending: higher score first
         });
         
         return suggestions;
     }
+
+    /**
+     * Pantry-aware suggestions: sorted by match percentage (highest to lowest)
+     * Returns maximum recipes sorted by match percentage
+     */
+    public List<Recipe> getPantryAwareSuggestions(PantryManager pantryManager) {
+        List<String> availableIngredients = pantryManager.getAllIngredients().stream()
+                .filter(i -> i.getQuantity() > 0)
+                .map(Ingredient::getName)
+                .collect(java.util.stream.Collectors.toList());
+
+        // Include all recipes and sort by match percentage (descending)
+        List<Recipe> suggestions = new ArrayList<>(recipes);
+
+        // Cache match scores to avoid recalculating during sort (performance optimization)
+        Map<Recipe, Double> scoreCache = new HashMap<>();
+        for (Recipe recipe : suggestions) {
+            scoreCache.put(recipe, calculateIngredientMatch(recipe.getIngredients(), availableIngredients));
+        }
+
+        // Sort by match percentage: highest match percentage at top, lowest at bottom
+        suggestions.sort((a, b) -> {
+            double as = scoreCache.get(a);
+            double bs = scoreCache.get(b);
+            return Double.compare(bs, as); // Descending: higher match first
+        });
+
+        return suggestions;
+    }
+
+    private boolean canCookWithPantry(Recipe recipe, PantryManager pantryManager) {
+        for (String ing : recipe.getIngredients()) {
+            Ingredient match = findMatchingIngredientInPantry(ing, pantryManager);
+            if (match == null || match.getQuantity() <= 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Ingredient findMatchingIngredientInPantry(String recipeIngredient, PantryManager pantryManager) {
+        // Use advanced ingredient matcher
+        for (Ingredient pantryIng : pantryManager.getAllIngredients()) {
+            if (pantryIng.getQuantity() <= 0) continue;
+            if (IngredientMatcher.matches(recipeIngredient, pantryIng.getName())) {
+                return pantryIng;
+            }
+        }
+        return null;
+    }
+
+    
     
     /**
      * Calculate ingredient match score between recipe and available ingredients
+     * Uses weighted scoring: exact matches = 1.0, partial = 0.7, etc.
      */
     private double calculateIngredientMatch(List<String> recipeIngredients, List<String> availableIngredients) {
         if (recipeIngredients.isEmpty()) return 0.0;
         
-        int matches = 0;
+        double totalScore = 0.0;
         for (String recipeIngredient : recipeIngredients) {
-            if (hasMatchingIngredient(recipeIngredient, availableIngredients)) {
-                matches++;
+            double bestMatch = 0.0;
+            for (String available : availableIngredients) {
+                double score = IngredientMatcher.calculateMatchScore(recipeIngredient, available);
+                if (score > bestMatch) {
+                    bestMatch = score;
+                }
             }
+            totalScore += bestMatch;
         }
         
-        return (double) matches / recipeIngredients.size();
+        return totalScore / recipeIngredients.size();
     }
     
     /**
      * Check if recipe ingredient matches any available ingredient
      */
     private boolean hasMatchingIngredient(String recipeIngredient, List<String> availableIngredients) {
-        String normalizedRecipe = recipeIngredient.toLowerCase().trim();
-        
         for (String available : availableIngredients) {
-            String normalizedAvailable = available.toLowerCase().trim();
-            
-            // Direct match
-            if (normalizedRecipe.equals(normalizedAvailable)) {
-                return true;
-            }
-            
-            // Partial match
-            if (normalizedRecipe.contains(normalizedAvailable) || 
-                normalizedAvailable.contains(normalizedRecipe)) {
-                return true;
-            }
-            
-            // Fuzzy match using FuzzyMatcher
-            if (FuzzyMatcher.calculateSimilarity(normalizedRecipe, normalizedAvailable) > 0.7) {
+            if (IngredientMatcher.matches(recipeIngredient, available)) {
                 return true;
             }
         }
-        
         return false;
     }
     

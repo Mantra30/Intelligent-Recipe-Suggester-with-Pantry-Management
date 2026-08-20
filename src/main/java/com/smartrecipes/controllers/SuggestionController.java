@@ -1,6 +1,7 @@
 package com.smartrecipes.controllers;
 
 import com.smartrecipes.models.*;
+import com.smartrecipes.utils.IngredientMatcher;
 import com.smartrecipes.utils.UIUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -64,11 +65,29 @@ public class SuggestionController implements Initializable {
                 super.updateItem(recipe, empty);
                 if (empty || recipe == null) {
                     setText(null);
+                    setStyle("");
                 } else {
                     double matchScore = recipeMatchScores.getOrDefault(recipe, 0.0);
                     String matchPercentage = String.format("%.0f%%", matchScore * 100);
-                    setText(recipe.getTitle() + " (" + recipe.getCuisine() + ") - " + 
-                           recipe.getFormattedTotalTime() + " - Match: " + matchPercentage);
+                    
+                    // Check if fully cookable
+                    boolean canCook = canCookRecipe(recipe);
+                    String prefix = canCook ? "✓ " : "";
+                    String suffix = canCook ? " [COOKABLE NOW]" : "";
+                    
+                    setText(prefix + recipe.getTitle() + " (" + recipe.getCuisine() + ") - " + 
+                           recipe.getFormattedTotalTime() + " - Match: " + matchPercentage + suffix);
+                    
+                    // Style based on match score and cookability
+                    if (canCook) {
+                        setStyle("-fx-font-weight: bold; -fx-text-fill: #2e7d32;");
+                    } else if (matchScore >= 0.8) {
+                        setStyle("-fx-text-fill: #1976d2;");
+                    } else if (matchScore >= 0.5) {
+                        setStyle("-fx-text-fill: #f57c00;");
+                    } else {
+                        setStyle("-fx-text-fill: #666;");
+                    }
                 }
             }
         });
@@ -113,25 +132,21 @@ public class SuggestionController implements Initializable {
     private void loadSuggestions() {
         Platform.runLater(() -> {
             List<String> availableIngredients = pantryManager.getAllIngredients().stream()
+                    .filter(i -> i.getQuantity() > 0)
                     .map(Ingredient::getName)
                     .collect(Collectors.toList());
             
-            List<Recipe> suggestions = recipeManager.getSuggestedRecipes(availableIngredients, pantryManager);
+            // Get recipes already sorted by match percentage (performance: no redundant sorting)
+            List<Recipe> suggestions = recipeManager.getPantryAwareSuggestions(pantryManager);
             
-            // Calculate match scores
+            // Calculate match scores for display (recipes already sorted by match percentage)
             recipeMatchScores.clear();
             for (Recipe recipe : suggestions) {
                 double matchScore = calculateMatchScore(recipe, availableIngredients);
                 recipeMatchScores.put(recipe, matchScore);
             }
             
-            // Sort by match score
-            suggestions.sort((r1, r2) -> {
-                double score1 = recipeMatchScores.get(r1);
-                double score2 = recipeMatchScores.get(r2);
-                return Double.compare(score2, score1);
-            });
-            
+            // Recipes are already sorted by match percentage, just add to list
             suggestionsObservableList.clear();
             suggestionsObservableList.addAll(suggestions);
             
@@ -143,35 +158,47 @@ public class SuggestionController implements Initializable {
     private double calculateMatchScore(Recipe recipe, List<String> availableIngredients) {
         if (recipe.getIngredients().isEmpty()) return 0.0;
         
-        int matches = 0;
+        double totalScore = 0.0;
         for (String recipeIngredient : recipe.getIngredients()) {
-            if (hasMatchingIngredient(recipeIngredient, availableIngredients)) {
-                matches++;
+            double bestMatch = 0.0;
+            for (String available : availableIngredients) {
+                double score = IngredientMatcher.calculateMatchScore(recipeIngredient, available);
+                if (score > bestMatch) {
+                    bestMatch = score;
+                }
             }
+            totalScore += bestMatch;
         }
         
-        return (double) matches / recipe.getIngredients().size();
+        return totalScore / recipe.getIngredients().size();
     }
     
     private boolean hasMatchingIngredient(String recipeIngredient, List<String> availableIngredients) {
-        String normalizedRecipe = recipeIngredient.toLowerCase().trim();
-        
         for (String available : availableIngredients) {
-            String normalizedAvailable = available.toLowerCase().trim();
-            
-            // Direct match
-            if (normalizedRecipe.equals(normalizedAvailable)) {
-                return true;
-            }
-            
-            // Partial match
-            if (normalizedRecipe.contains(normalizedAvailable) || 
-                normalizedAvailable.contains(normalizedRecipe)) {
+            if (IngredientMatcher.matches(recipeIngredient, available)) {
                 return true;
             }
         }
-        
         return false;
+    }
+    
+    private boolean canCookRecipe(Recipe recipe) {
+        List<String> availableIngredients = pantryManager.getAllIngredients().stream()
+                .filter(i -> i.getQuantity() > 0)
+                .map(Ingredient::getName)
+                .collect(Collectors.toList());
+        
+        for (String recipeIngredient : recipe.getIngredients()) {
+            boolean found = false;
+            for (String available : availableIngredients) {
+                if (IngredientMatcher.matches(recipeIngredient, available)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
     }
     
     private void filterSuggestions() {
